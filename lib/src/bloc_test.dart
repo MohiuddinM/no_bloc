@@ -1,3 +1,4 @@
+import 'package:pedantic/pedantic.dart';
 import 'package:test/test.dart';
 
 import 'bloc.dart';
@@ -24,7 +25,7 @@ void testBloc<R extends Bloc<R, S>, S>(
     await setup();
     final _bloc = await bloc();
     final stream = _bloc.state.where((event) => event != null);
-    expectLater(transform == null ? stream : stream.map((event) => transform(event)), expectedStates);
+    unawaited(expectLater(transform == null ? stream : stream.map((event) => transform(event)), expectedStates));
     if (expectBefore != null) {
       await expectBefore(_bloc);
     }
