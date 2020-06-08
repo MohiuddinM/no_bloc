@@ -33,10 +33,12 @@ void main() {
 &nbsp; 
 
 ##### A bit more complex bloc:
+AutoPersistedBloc can be used to save value on app exit, and recover again on app start. Keeps State in sync, shows error messages and  loading indicator.
+
 ```dart
 import 'package:no_bloc/no_bloc.dart';
 
-class CounterBloc extends Bloc {
+class CounterBloc extends AutoPersistedBloc<CounterBloc, int> {
   void increment() async {
     if (value >= 10) {
       setError(StateError('Counter cannot go beyond 10'));
