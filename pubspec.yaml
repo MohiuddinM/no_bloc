@@ -1,6 +1,6 @@
 name: no_bloc
 description: Making blocs easy again. A simplified library for the original bloc approach.
-version: 0.1.4
+version: 0.1.5
 homepage: https://github.com/MohiuddinM/no_bloc
 
 environment:

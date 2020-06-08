@@ -1,12 +1,19 @@
 import 'package:no_bloc/no_bloc.dart';
 import 'package:test/test.dart';
 
+class BroadcastPrinter extends BlocMonitor {
+  @override
+  void onBroadcast(String blocName, state, {String event}) {
+    print('[$blocName] broadcast: $state ($event)');
+  }
+}
+
 class CounterBloc extends Bloc<CounterBloc, int> {
-  CounterBloc(int initState) : super(initialState: initState);
+  CounterBloc(int initialState) : super(initialState: initialState, monitor: BroadcastPrinter());
 
-  void increment() => setState(value + 1);
+  void increment() => setState(value + 1, event: 'increment');
 
-  void decrement() => setState(value - 1);
+  void decrement() => setState(value - 1, event: 'decrement');
 }
 
 void main() {

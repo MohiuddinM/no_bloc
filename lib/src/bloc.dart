@@ -96,7 +96,7 @@ abstract class Bloc<R, S> {
       _value = next;
       if (_state != null) {
         _state.add(value);
-        _monitor?.onBroadcast('$R', value);
+        _monitor?.onBroadcast('$R', value, event: event);
       }
     }
   }
