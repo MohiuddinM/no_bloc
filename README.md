@@ -59,6 +59,18 @@ void main() async {
   await bloc.increment();
 }
 ```
+## Bloc Monitor
+You can monitor your blocs and create side effects simply by using a bloc monitor.
+```dart
+ class BroadcastPrinter extends BlocMonitor {
+   @override
+   void onBroadcast(String blocName, state, {String event}) {
+     print('[$blocName] broadcast: $state ($event)');
+   }
+ }
+```
+
+For more details: [bloc monitor](https://pub.dev/documentation/no_bloc/latest/no_bloc/BlocMonitor-class.html)
 
 ## Test
 ```dart
