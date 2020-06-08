@@ -30,4 +30,36 @@ void main() {
       bloc.decrement();
     },
   );
+
+  testBloc<CounterBloc, int>(
+    'setting busy should not change value',
+    bloc: () async => CounterBloc(0),
+    expectBefore: (bloc) async => expect(bloc.isBusy, false),
+    expectAfter: (bloc) async {
+      expect(bloc.value, 1);
+      expect(bloc.isBusy, true);
+    },
+    timeout: Duration(seconds: 1),
+    expectedStates: emitsInOrder([0, 1]),
+    job: (bloc) async {
+      bloc.increment();
+      bloc.setBusy();
+    },
+  );
+
+  testBloc<CounterBloc, int>(
+    'setting error should not change value',
+    bloc: () async => CounterBloc(0),
+    expectBefore: (bloc) async => expect(bloc.isBusy, false),
+    expectAfter: (bloc) async {
+      expect(bloc.value, 1);
+      expect(bloc.hasError, true);
+    },
+    timeout: Duration(seconds: 1),
+    expectedStates: emitsInOrder([0, 1]),
+    job: (bloc) async {
+      bloc.increment();
+      bloc.setError(StateError('error'));
+    },
+  );
 }
