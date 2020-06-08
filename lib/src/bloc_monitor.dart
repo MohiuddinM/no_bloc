@@ -1,8 +1,10 @@
 /// Callbacks which are sent by the blocs, can be used for debugging or side effects
+///
 /// [T] is the type of state value
-/// [name] is the name of bloc, which sent the event
+/// [blocName] is the name of bloc, which sent the event
 abstract class BlocMonitor<T> {
   /// Called when the bloc is being initialized
+  ///
   /// Will be called even if initial state is null (isBusy = true)
   void onInit(String blocName, T initState) {}
 
