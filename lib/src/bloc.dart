@@ -130,6 +130,10 @@ abstract class Bloc<R, S> {
   }
 }
 
+/// Just a utility function to make sure if the state type implements equality (by default dart classes only support referential equality).
+///
+/// This library will not work if equality is not implemented. If you are manually overriding == and hashCode for your classes
+/// instead of using [Equatable] or [Built], then you have to set [Bloc.checkIfImplementsEquality] to false, to avoid getting false errors.
 bool implementsEquality(value) {
   return (!Bloc.checkIfImplementsEquality || value is num || value is String || value is DateTime || value is bool || value is Equatable || value is Built);
 }

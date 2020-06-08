@@ -1,3 +1,4 @@
+import 'package:meta/meta.dart';
 import 'package:pedantic/pedantic.dart';
 import 'package:test/test.dart';
 
@@ -9,20 +10,40 @@ typedef BlocTestBloc<R> = Future<R> Function();
 typedef BlocTestTransform<S, T> = T Function(S);
 typedef BlocTestVoidCallback = void Function();
 
+/// Utility function which abstracts over a dart test to ease off bloc testing
+///
 /// R = Type of bloc
 /// S = Type of State
 void testBloc<R extends Bloc<R, S>, S>(
+  /// name of the test
   String name, {
+
+  /// Any setup before the test e.g. mocking repositories
   FutureVoidCallback setup,
-  BlocTestBloc<R> bloc,
+
+  /// The bloc which is to be tested in this test must be created in this function
+  @required BlocTestBloc<R> bloc,
+
+  /// Any assertions that must be checked before any operations are run on the bloc
   BlocCallback<R> expectBefore,
+
+  /// Any assertions that must be checked just before the bloc is to be dispose (end of test)
   BlocCallback<R> expectAfter,
-  StreamMatcher expectedStates,
-  BlocCallback<R> job,
+
+  /// States which are considered valid broadcasts by bloc
+  @required StreamMatcher expectedStates,
+
+  /// All the operations on the bloc must be done in this function
+  @required BlocCallback<R> job,
+
+  /// Any conversions which will be performed on the state before it is matched against [expectedStates]
   BlocTestTransform<S, dynamic> transform,
+  Duration timeout,
 }) async {
   test(name, () async {
-    await setup();
+    if (setup != null) {
+      await setup();
+    }
     final _bloc = await bloc();
     final stream = _bloc.state.where((event) => event != null);
     unawaited(expectLater(transform == null ? stream : stream.map((event) => transform(event)), expectedStates));
@@ -30,8 +51,9 @@ void testBloc<R extends Bloc<R, S>, S>(
       await expectBefore(_bloc);
     }
     await job(_bloc);
+
     if (expectAfter != null) {
       await expectAfter(_bloc);
     }
-  });
+  }, timeout: Timeout(timeout));
 }

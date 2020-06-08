@@ -1,35 +1,26 @@
 import 'package:no_bloc/no_bloc.dart';
 import 'package:test/test.dart';
 
-class CalcBloc extends Bloc<CalcBloc, int> {
-  CalcBloc(int initState) : super(initialState: initState);
+class CounterBloc extends Bloc<CounterBloc, int> {
+  CounterBloc(int initState) : super(initialState: initState);
 
-  void add(int i) => setState(value + i);
+  void increment() => setState(value + 1);
 
-  void sub(int i) => setState(value - i);
+  void decrement() => setState(value - 1);
 }
 
 void main() {
-  test('stream should emit correct state', () {
-    final bloc = CalcBloc(0);
-
-    expectLater(bloc.state, emitsInOrder([0, 1, 2, 3, 4]));
-
-    bloc.add(1);
-    bloc.add(1);
-    bloc.add(1);
-    bloc.sub(-1);
-  });
-
-  test('stream should be set initialState if provided', () async {
-    final bloc = CalcBloc(0);
-
-    expect(await bloc.state.first, 0);
-  });
-
-  test('stream should set busy if initialState is null', () async {
-    final bloc = CalcBloc(null);
-
-    expect(bloc.isBusy, true);
-  });
+  testBloc<CounterBloc, int>(
+    'counter should work',
+    bloc: () async => CounterBloc(0),
+    expectBefore: (bloc) async => expect(bloc.isBusy, false),
+    expectAfter: (bloc) async => expect(bloc.hasError, false),
+    timeout: Duration(seconds: 1),
+    expectedStates: emitsInOrder([0, 1, 2, 1]),
+    job: (bloc) async {
+      bloc.increment();
+      bloc.increment();
+      bloc.decrement();
+    },
+  );
 }

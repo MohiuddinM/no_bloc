@@ -1,9 +1,11 @@
 A Dart library to make blocs easy again.
 
-Checkout the flutter version too: 
+Checkout the flutter version too: [no_bloc_flutter](https://pub.dev/packages/no_bloc_flutter)
 
 ## Why?
-Existing bloc packages require too much "State and Event" boilerplate, and expose underlying Streams complexity.
+This library provides a simpler alternative for existing libraries which: 
+- Require a lot of boilerplate code
+- Expose complexity of underlying reactive streams
 
 ## Pros 👍
 - Easy to use and works out of the box
@@ -56,10 +58,26 @@ void main() async {
 }
 ```
 
+## Test
+```dart
+testBloc<CounterBloc, int>(
+    'counter should work',
+    bloc: () async => CounterBloc(0),
+    expectBefore: (bloc) async => expect(bloc.isBusy, false),
+    expectAfter: (bloc) async => expect(bloc.hasError, false),
+    timeout: Duration(seconds: 1),
+    expectedStates: emitsInOrder([0, 1, 2, 1]),
+    job: (bloc) async {
+      bloc.increment();
+      bloc.increment();
+      bloc.decrement();
+    },
+  );
+```
 
 ## Contribution ❤
 Issues and pull requests are welcome
 
 Please file feature requests and bugs at the [issue tracker][tracker].
 
-[tracker]: http://example.com/issues/replaceme
+[tracker]: https://github.com/MohiuddinM/no_bloc
