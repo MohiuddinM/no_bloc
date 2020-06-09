@@ -1,3 +1,7 @@
+## 0.2.0
+
+- bug fixes
+
 ## 0.1.5
 
 - minor changes
