@@ -11,7 +11,7 @@ import 'package:rxdart/rxdart.dart';
 /// [R] is the type which subclasses [Bloc]
 /// [S] is the type of [value] which this bloc broadcasts. [S] must implement equality
 abstract class Bloc<R, S> {
-  static const checkIfImplementsEquality = true;
+  static bool checkIfImplementsEquality = true;
   final BlocMonitor _monitor;
   StateError _error;
   bool _isBusy = true;
@@ -37,7 +37,7 @@ abstract class Bloc<R, S> {
   Stream<S> get state {
     _monitor?.onStreamListener('$R');
     if (_state == null) {
-      if (value == null) {
+      if (_value == null) {
         _state = BehaviorSubject<S>();
       } else {
         _state = BehaviorSubject.seeded(value);
@@ -86,17 +86,17 @@ abstract class Bloc<R, S> {
   void setState(S state, {String event}) {
     assert(state != null);
     assert(implementsEquality(state));
-    _monitor?.onEvent('$R', value, event: event);
+    _monitor?.onEvent('$R', _value, state, event: event);
     _isBusy = false;
     _error = null;
-    final next = nextState(value, state);
+    final next = nextState(_value, state);
 
     // only broadcast if the state has actually changed
-    if (next != value) {
+    if (next != _value) {
       _value = next;
       if (_state != null) {
-        _state.add(value);
-        _monitor?.onBroadcast('$R', value, event: event);
+        _state.add(_value);
+        _monitor?.onBroadcast('$R', _value, event: event);
       }
     }
   }

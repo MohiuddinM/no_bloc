@@ -18,7 +18,10 @@ abstract class PersistedBloc<R, S> extends Bloc<R, S> {
     if (autoPersistence && recoverStateOnStart) {
       persistenceService.get<S>('value').then((got) {
         if (got == null) {
-          super.setState(initialState, event: 'initializing');
+          if (initialState != null) {
+            // if initialState is null then the bloc's is already set to busy
+            super.setState(initialState, event: 'initializing');
+          }
         } else {
           super.setState(got, event: 'recovered_state');
         }

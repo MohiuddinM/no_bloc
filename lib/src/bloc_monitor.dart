@@ -15,7 +15,7 @@ abstract class BlocMonitor<T> {
   void onStreamDispose(String blocName) {}
 
   /// Called when bloc calls the [setState] method
-  void onEvent(String blocName, T currentState, {String event}) {}
+  void onEvent(String blocName, T currentState, T update, {String event}) {}
 
   /// Called when the bloc broadcasts a new state to the connected builders
   void onBroadcast(String blocName, T state, {String event}) {}

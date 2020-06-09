@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 
@@ -25,6 +27,7 @@ abstract class PersistenceService {
 
 class HivePersistenceService implements PersistenceService {
   static String databaseDirectory;
+  static bool runningInTest = false;
   final _box = Completer<Box>();
 
   HivePersistenceService(name) {
@@ -34,12 +37,12 @@ class HivePersistenceService implements PersistenceService {
   void _initialize(name, String directory) async {
     assert(directory != null);
     Hive.init(directory);
-    _box.complete(Hive.openBox(name));
+    final box = await Hive.openBox(name, bytes: runningInTest ? Uint8List(0) : null);
+    _box.complete(box);
   }
 
   @override
   Future<S> get<S>(String key) async {
-    PersistenceService.use((name) => HivePersistenceService(name));
     final box = await _box.future;
     final value = box.get(key);
     assert(value is S || value == null, 'the type you are trying to get is not the same as what you saved');
@@ -47,8 +50,8 @@ class HivePersistenceService implements PersistenceService {
   }
 
   bool _isPrimitiveOrSerializable(value) {
-    final type = value.runtimeType;
-    if (type == num || type == String || type == DateTime || type == bool) {
+    assert(value != null);
+    if (value is num || value is String || value is DateTime || value is bool) {
       return true;
     }
 
@@ -60,18 +63,9 @@ class HivePersistenceService implements PersistenceService {
     }
   }
 
-  operator [](Object key) {
-    // TODO: implement []
-    throw UnimplementedError();
-  }
-
-  void operator []=(key, value) {
-    // TODO: implement []=
-  }
-
-  void remove(Object key) {
-    // TODO: implement remove
-    throw UnimplementedError();
+  void remove(String key) async {
+    final box = await _box.future;
+    await box.delete(key);
   }
 
   @override

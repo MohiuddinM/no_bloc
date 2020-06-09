@@ -18,4 +18,5 @@ dependencies:
   pedantic: ^1.0.0
 
 dev_dependencies:
+  mockito: ^4.0.0
 

@@ -14,9 +14,10 @@ typedef BlocTestVoidCallback = void Function();
 ///
 /// R = Type of bloc
 /// S = Type of State
+@isTest
 void testBloc<R extends Bloc<R, S>, S>(
-  /// name of the test
-  String name, {
+  /// description of the test
+  description, {
 
   /// Any setup before the test e.g. mocking repositories
   FutureVoidCallback setup,
@@ -40,7 +41,7 @@ void testBloc<R extends Bloc<R, S>, S>(
   BlocTestTransform<S, dynamic> transform,
   Duration timeout,
 }) async {
-  test(name, () async {
+  return test(description, () async {
     if (setup != null) {
       await setup();
     }
