@@ -4,9 +4,11 @@ import 'dart:typed_data';
 import 'package:hive/hive.dart';
 
 typedef PersistenceServiceBuilder = PersistenceService Function(String name);
+typedef Deserializer<T> = T Function(dynamic json);
 
 abstract class PersistenceService {
   static PersistenceServiceBuilder _builder;
+  static Map<Type, Deserializer> deserializers = <Type, Deserializer>{};
 
   static void use(PersistenceServiceBuilder builder) {
     _builder = builder;
@@ -22,6 +24,10 @@ abstract class PersistenceService {
   Future<T> get<T>(String key);
 
   Future<void> clear();
+
+  static void addDeserializer<T>(Deserializer<T> deserializer) {
+    deserializers.putIfAbsent(T, () => deserializer);
+  }
 }
 
 class HivePersistenceService implements PersistenceService {
@@ -43,7 +49,15 @@ class HivePersistenceService implements PersistenceService {
   @override
   Future<S> get<S>(String key) async {
     final box = await _box.future;
-    final value = box.get(key);
+    dynamic value = box.get(key);
+
+    if (value != null && value is! S && (value is String || value is Map)) {
+      if (PersistenceService.deserializers.containsKey(S)) {
+        final deserializer = PersistenceService.deserializers[S];
+        value = deserializer(value);
+      }
+    }
+
     assert(value is S || value == null, 'the type you are trying to get is not the same as what you saved');
     return value as S;
   }
@@ -56,10 +70,12 @@ class HivePersistenceService implements PersistenceService {
 
     try {
       value.toJson();
-      return true;
     } on NoSuchMethodError {
       return false;
     }
+
+    return PersistenceService.deserializers.containsKey(value.runtimeType);
+
   }
 
   void remove(String key) async {
@@ -70,7 +86,7 @@ class HivePersistenceService implements PersistenceService {
   @override
   Future<void> set(String key, value) async {
     assert(value != null);
-    assert(_isPrimitiveOrSerializable(value));
+    assert(_isPrimitiveOrSerializable(value), 'value should either be of primitive type or have a toJson() function');
     final box = await _box.future;
     return box.put(key, value);
   }

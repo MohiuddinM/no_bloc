@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:mockito/mockito.dart';
 import 'package:no_bloc/no_bloc.dart';
@@ -15,10 +16,27 @@ class BlocPrinter extends BlocMonitor {
   }
 }
 
-class CounterBloc extends AutoPersistedBloc<CounterBloc, int> {
+class Int extends Equatable {
+  final int value;
+
+  Int(this.value);
+
+  Int.fromJson(Map<String, Object> json) : value = json['value'];
+
+  Map<String, Object> toJson() => {'value': value};
+
+  @override
+  List<Object> get props => [value];
+
+  Int operator +(other) => Int(value + other);
+
+  Int operator -(other) => Int(value - other);
+}
+
+class CounterBloc extends AutoPersistedBloc<CounterBloc, Int> {
   final int counterNumber;
 
-  CounterBloc({@required this.counterNumber, int initialState}) : super(initialState: initialState, tag: counterNumber, monitor: BlocPrinter());
+  CounterBloc({@required this.counterNumber, Int initialState}) : super(initialState: initialState, tag: counterNumber, monitor: BlocPrinter());
 
   void increment() => setState(value + 1, event: 'increment');
 
@@ -28,6 +46,7 @@ class CounterBloc extends AutoPersistedBloc<CounterBloc, int> {
 class MockPersistenceService extends Mock implements PersistenceService {}
 
 void main() {
+  PersistenceService.addDeserializer((json) => Int.fromJson(json));
   HivePersistenceService.runningInTest = true;
   HivePersistenceService.databaseDirectory = '.';
 
@@ -36,14 +55,14 @@ void main() {
 
   tearDownAll(() {});
 
-  testBloc<CounterBloc, int>(
+  testBloc<CounterBloc, Int>(
     'bloc should work with hive persistence',
     expectBefore: (bloc) async {
       expect(bloc.isBusy, true);
     },
     expectAfter: (bloc) async {},
-    bloc: () async => CounterBloc(counterNumber: 1, initialState: 0),
-    expectedStates: emitsInOrder([0, 1, 0]),
+    bloc: () async => CounterBloc(counterNumber: 1, initialState: Int(0)),
+    expectedStates: emitsInOrder([Int(0), Int(1), Int(0)]),
     job: (bloc) async {
       bloc.increment();
       bloc.decrement();
@@ -52,8 +71,8 @@ void main() {
 
   test('bloc should recover initial state', () async {
     PersistenceService.use((name) => name == 'CounterBloc.1' ? counter1 : counter2);
-    when(counter1.get<int>(any)).thenAnswer((realInvocation) async => 1);
-    when(counter2.get<int>(any)).thenAnswer((realInvocation) async => 2);
+    when(counter1.get<Int>(any)).thenAnswer((realInvocation) async => Int(1));
+    when(counter2.get<Int>(any)).thenAnswer((realInvocation) async => Int(2));
 
     final bloc1 = CounterBloc(counterNumber: 1);
     final bloc2 = CounterBloc(counterNumber: 2);
@@ -65,8 +84,8 @@ void main() {
 
     await Future.delayed(Duration(seconds: 1));
 
-    expect(bloc1.value, 1);
-    expect(bloc2.value, 2);
+    expect(bloc1.value, Int(1));
+    expect(bloc2.value, Int(2));
 
     verify(counter1.get(any)).called(1);
     verify(counter2.get(any)).called(1);

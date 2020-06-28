@@ -44,7 +44,7 @@ abstract class Bloc<R, S> {
       }
 
       _state.onCancel = () {
-        if (!_state.hasListener) {
+        if (_state != null && !_state.hasListener) {
           _monitor?.onStreamDispose('$R');
           // no need to close, because we don't have any listeners and this is the only reference (so GC will handle clean up)
           _state = null;

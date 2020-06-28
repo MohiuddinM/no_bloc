@@ -1,3 +1,11 @@
+## 0.3.0
+
+- bug fixes
+
+## 0.2.3
+
+- minor bug fix
+
 ## 0.2.1
 
 - remove dependence on dart:io
