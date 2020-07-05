@@ -1,4 +1,4 @@
-A Dart library to make blocs easy again.
+A State management library for Dart and Flutter using BLoCs (Business Logic Component)
 
 Checkout the flutter version too: [no_bloc_flutter](https://pub.dev/packages/no_bloc_flutter)
 

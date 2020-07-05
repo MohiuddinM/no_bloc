@@ -1,3 +1,7 @@
+## 0.3.3
+
+- update description
+
 ## 0.3.0
 
 - bug fixes
