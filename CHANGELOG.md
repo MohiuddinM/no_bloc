@@ -1,3 +1,23 @@
+## 0.3.8
+
+- minor changes
+
+## 0.3.7
+
+- update description
+
+## 0.3.6
+
+- fix typos
+
+## 0.3.5
+
+- update description
+
+## 0.3.4
+
+- update description
+
 ## 0.3.3
 
 - update description

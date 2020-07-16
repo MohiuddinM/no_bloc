@@ -56,7 +56,10 @@ abstract class Bloc<R, S> {
   }
 
   S get value {
-    assert(_value != null, 'value cannot be used before it is set (did you forgot to set initialState)');
+    assert(
+      _value != null,
+      'value cannot be used before it is set (did you forgot to set initialState)',
+    );
     return _value;
   }
 
@@ -135,5 +138,11 @@ abstract class Bloc<R, S> {
 /// This library will not work if equality is not implemented. If you are manually overriding == and hashCode for your classes
 /// instead of using [Equatable] or [Built], then you have to set [Bloc.checkIfImplementsEquality] to false, to avoid getting false errors.
 bool implementsEquality(value) {
-  return (!Bloc.checkIfImplementsEquality || value is num || value is String || value is DateTime || value is bool || value is Equatable || value is Built);
+  return (!Bloc.checkIfImplementsEquality ||
+      value is num ||
+      value is String ||
+      value is DateTime ||
+      value is bool ||
+      value is Equatable ||
+      value is Built);
 }

@@ -1,6 +1,6 @@
 name: no_bloc
-description: Making blocs easy again! And also less boilerplate :)
-version: 0.3.3
+description: Make bloc easy again! A simple and low boilerplate implementation of the bloc state management pattern. Includes extras to work with blocs like testing, monitoring and persistence.
+version: 0.3.8
 homepage: https://github.com/MohiuddinM/no_bloc
 
 environment:
