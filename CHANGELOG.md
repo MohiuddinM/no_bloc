@@ -1,3 +1,11 @@
+## 0.3.10
+
+- minor change
+
+## 0.3.9
+
+- minor changes
+
 ## 0.3.8
 
 - minor changes
