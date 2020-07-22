@@ -47,7 +47,11 @@ void testBloc<R extends Bloc<R, S>, S>(
     }
     final _bloc = await bloc();
     final stream = _bloc.state.where((event) => event != null);
-    unawaited(expectLater(transform == null ? stream : stream.map((event) => transform(event)), expectedStates));
+
+    unawaited(expectLater(
+        transform == null ? stream : stream.map((event) => transform(event)),
+        expectedStates));
+
     if (expectBefore != null) {
       await expectBefore(_bloc);
     }

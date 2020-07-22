@@ -5,7 +5,13 @@ import 'persistence_service.dart';
 
 /// If bloc is not a singleton then tags must be provided to differential between different instances, otherwise different instances will overwrite each other
 abstract class AutoPersistedBloc<R, S> extends PersistedBloc<R, S> {
-  AutoPersistedBloc({S initialState, tag, BlocMonitor monitor}) : super(initialState: initialState, monitor: monitor, tag: tag, autoPersistence: true, recoverStateOnStart: true);
+  AutoPersistedBloc({S initialState, tag, BlocMonitor monitor})
+      : super(
+            initialState: initialState,
+            monitor: monitor,
+            tag: tag,
+            autoPersistence: true,
+            recoverStateOnStart: true);
 }
 
 abstract class PersistedBloc<R, S> extends Bloc<R, S> {
@@ -13,8 +19,17 @@ abstract class PersistedBloc<R, S> extends Bloc<R, S> {
   final bool recoverStateOnStart;
   final Object tag;
 
-  PersistedBloc({S initialState, BlocMonitor monitor, this.tag, this.autoPersistence = false, this.recoverStateOnStart = false})
-      : super(initialState: (autoPersistence && recoverStateOnStart) ? null : initialState, monitor: monitor) {
+  PersistedBloc({
+    S initialState,
+    BlocMonitor monitor,
+    this.tag,
+    this.autoPersistence = false,
+    this.recoverStateOnStart = false,
+  }) : super(
+          initialState:
+              (autoPersistence && recoverStateOnStart) ? null : initialState,
+          monitor: monitor,
+        ) {
     if (autoPersistence && recoverStateOnStart) {
       persistenceService.get<S>('value').then((got) {
         if (got == null) {
@@ -29,7 +44,8 @@ abstract class PersistedBloc<R, S> extends Bloc<R, S> {
     }
   }
 
-  PersistenceService get persistenceService => PersistenceService('$R.${tag ?? 0}');
+  PersistenceService get persistenceService =>
+      PersistenceService('$R.${tag ?? 0}');
 
   @override
   void setState(S state, {String event = 'BlocOp'}) {

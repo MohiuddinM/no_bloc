@@ -9,7 +9,8 @@ class BroadcastPrinter extends BlocMonitor {
 }
 
 class CounterBloc extends Bloc<CounterBloc, int> {
-  CounterBloc(int initialState) : super(initialState: initialState, monitor: BroadcastPrinter());
+  CounterBloc(int initialState)
+      : super(initialState: initialState, monitor: BroadcastPrinter());
 
   void increment() => setState(value + 1, event: 'increment');
 
@@ -43,6 +44,7 @@ void main() {
     expectedStates: emitsInOrder([0, 1]),
     job: (bloc) async {
       bloc.increment();
+      // ignore: invalid_use_of_protected_member
       bloc.setBusy();
     },
   );
@@ -59,6 +61,7 @@ void main() {
     expectedStates: emitsInOrder([0, 1]),
     job: (bloc) async {
       bloc.increment();
+      // ignore: invalid_use_of_protected_member
       bloc.setError(StateError('error'));
     },
   );
