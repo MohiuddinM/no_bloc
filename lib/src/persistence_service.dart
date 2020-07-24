@@ -40,6 +40,7 @@ class HivePersistenceService implements PersistenceService {
   }
 
   void _initialize(name, String directory) async {
+    if (_box.isCompleted) return;
     assert(
       directory != null,
       'HivePersistenceService.databaseDirectory is not set',
