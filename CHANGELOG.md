@@ -1,3 +1,7 @@
+## 0.4.0
+
+- add remove method to persistence service
+
 ## 0.3.10
 
 - minor change
