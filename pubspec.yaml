@@ -1,10 +1,10 @@
 name: no_bloc
 description: Make bloc easy again! A simple and low boilerplate implementation of the bloc state management pattern. Includes extras to work with blocs like testing, monitoring and persistence.
-version: 0.3.10
+version: 0.4.0
 homepage: https://github.com/MohiuddinM/no_bloc
 
 environment:
-  sdk: '>=2.7.0 <3.0.0'
+  sdk: '>=2.10.0 <3.0.0'
 
 dependencies:
   rxdart: ^0.24.1
