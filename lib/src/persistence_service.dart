@@ -25,6 +25,8 @@ abstract class PersistenceService {
 
   Future<void> clear();
 
+  void remove(String key);
+
   static void addDeserializer<T>(Deserializer<T> deserializer) {
     deserializers.putIfAbsent(T, () => deserializer);
   }
@@ -42,8 +44,8 @@ class HivePersistenceService implements PersistenceService {
   void _initialize(name, String directory) async {
     if (_box.isCompleted) return;
     assert(
-      directory != null,
-      'HivePersistenceService.databaseDirectory is not set',
+    directory != null,
+    'HivePersistenceService.databaseDirectory is not set',
     );
     Hive.init(directory);
     final box = await Hive.openBox(
@@ -66,8 +68,8 @@ class HivePersistenceService implements PersistenceService {
     }
 
     assert(
-      value is S || value == null,
-      'the type you are trying to get is not the same as what you saved',
+    value is S || value == null,
+    'the type you are trying to get is not the same as what you saved',
     );
     return value as S;
   }
@@ -87,6 +89,7 @@ class HivePersistenceService implements PersistenceService {
     return PersistenceService.deserializers.containsKey(value.runtimeType);
   }
 
+  @override
   void remove(String key) async {
     final box = await _box.future;
     await box.delete(key);
@@ -96,8 +99,8 @@ class HivePersistenceService implements PersistenceService {
   Future<void> set(String key, value) async {
     assert(value != null);
     assert(
-      _isPrimitiveOrSerializable(value),
-      'value should either be of primitive type or have a toJson() function',
+    _isPrimitiveOrSerializable(value),
+    'value should either be of primitive type or have a toJson() function',
     );
     final box = await _box.future;
     return box.put(key, value);
